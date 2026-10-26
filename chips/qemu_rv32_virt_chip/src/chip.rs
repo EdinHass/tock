@@ -24,7 +24,7 @@ use virtio::transports::mmio::VirtIOMMIODevice;
 
 type QemuRv32VirtPMP = rv32i::pmp::PMPUserMPU<
     5,
-    rv32i::pmp::kernel_protection_mml_epmp::KernelProtectionMMLEPMP<16, 5>,
+    rv32i::pmp::simple::SimplePMP<16>,
 >;
 
 pub type QemuRv32VirtClint<'a> = sifive::clint::Clint<'a, Freq10MHz>;
@@ -88,7 +88,7 @@ impl<'a, I: InterruptService + 'a> QemuRv32VirtChip<'a, I> {
     pub unsafe fn new(
         plic_interrupt_service: &'a I,
         timer: &'a QemuRv32VirtClint<'a>,
-        pmp: rv32i::pmp::kernel_protection_mml_epmp::KernelProtectionMMLEPMP<16, 5>,
+        pmp: rv32i::pmp::simple::SimplePMP<16>,
     ) -> Self {
         Self {
             userspace_kernel_boundary: rv32i::syscall::SysCall::new(),

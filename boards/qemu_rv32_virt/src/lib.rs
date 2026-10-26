@@ -231,38 +231,9 @@ pub unsafe fn start(
     // Set up memory protection immediately after setting the trap handler, to
     // ensure that much of the board initialization routine runs with ePMP
     // protection.
-    let epmp = rv32i::pmp::kernel_protection_mml_epmp::KernelProtectionMMLEPMP::new(
-        rv32i::pmp::kernel_protection_mml_epmp::FlashRegion(
-            rv32i::pmp::NAPOTRegionSpec::from_start_end(
-                core::ptr::addr_of!(_sflash),
-                core::ptr::addr_of!(_eflash),
-            )
-            .unwrap(),
-        ),
-        rv32i::pmp::kernel_protection_mml_epmp::RAMRegion(
-            rv32i::pmp::NAPOTRegionSpec::from_start_end(
-                core::ptr::addr_of!(_ssram),
-                core::ptr::addr_of!(_esram),
-            )
-            .unwrap(),
-        ),
-        rv32i::pmp::kernel_protection_mml_epmp::MMIORegion(
-            rv32i::pmp::NAPOTRegionSpec::from_start_size(
-                core::ptr::null::<u8>(), // start
-                0x20000000,              // size
-            )
-            .unwrap(),
-        ),
-        rv32i::pmp::kernel_protection_mml_epmp::KernelTextRegion(
-            rv32i::pmp::TORRegionSpec::from_start_end(
-                core::ptr::addr_of!(_stext),
-                core::ptr::addr_of!(_etext),
-            )
-            .unwrap(),
-        ),
-        epmp_miscellaneous_region,
-    )
-    .unwrap();
+    // TEST ONLY: plain PMP, which allows read + write + execute regions.
+    let _ = epmp_miscellaneous_region;
+    let epmp = rv32i::pmp::simple::SimplePMP::<16>::new().unwrap();
 
     // Acquire required capabilities
     let memory_allocation_cap = create_capability!(capabilities::MemoryAllocationCapability);

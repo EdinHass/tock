@@ -986,7 +986,7 @@ impl<C: Chip, D: 'static + ProcessStandardDebug> Process for ProcessStandard<'_,
             } else if let Err(()) = self.chip.mpu().update_app_memory_region(
                 new_break,
                 self.kernel_memory_break.get(),
-                mpu::Permissions::ReadWriteOnly,
+                mpu::Permissions::ReadWriteExecute, // TEST ONLY: app RAM may run code
                 config,
             ) {
                 Err(Error::OutOfMemory)
@@ -1951,7 +1951,7 @@ impl<C: 'static + Chip, D: 'static + ProcessStandardDebug> ProcessStandard<'_, C
             min_total_memory_size,
             min_process_memory_size,
             initial_kernel_memory_size,
-            mpu::Permissions::ReadWriteOnly,
+            mpu::Permissions::ReadWriteExecute, // TEST ONLY: app RAM may run code
             &mut mpu_config,
         ) {
             Some((memory_start, memory_size)) => (memory_start, memory_size),
@@ -2452,7 +2452,7 @@ impl<C: 'static + Chip, D: 'static + ProcessStandardDebug> ProcessStandard<'_, C
             self.memory_len, //we want exactly as much as we had before restart
             min_process_memory_size,
             initial_kernel_memory_size,
-            mpu::Permissions::ReadWriteOnly,
+            mpu::Permissions::ReadWriteExecute, // TEST ONLY: app RAM may run code
             &mut mpu_config,
         );
         let (app_mpu_mem_start, app_mpu_mem_len) = match app_mpu_mem {
@@ -2637,7 +2637,7 @@ impl<C: 'static + Chip, D: 'static + ProcessStandardDebug> ProcessStandard<'_, C
             } else if let Err(()) = self.chip.mpu().update_app_memory_region(
                 self.app_break.get(),
                 new_break,
-                mpu::Permissions::ReadWriteOnly,
+                mpu::Permissions::ReadWriteExecute, // TEST ONLY: app RAM may run code
                 config,
             ) {
                 None
